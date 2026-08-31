@@ -9,6 +9,7 @@
   <title>SpeakFlow — Social English</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./password-ui.css?v=3" />
 </head>
 <body>
   <div class="ambient" aria-hidden="true">
@@ -48,7 +49,8 @@
 
         <form id="loginForm" class="auth-form">
           <label>Email<input id="loginEmail" type="email" autocomplete="email" required placeholder="you@email.com"></label>
-          <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••"></label>
+          <label>Password<div class="password-field"><input id="loginPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••"><button class="password-toggle" type="button" data-password-toggle="loginPassword" aria-label="Show password">Show</button></div></label>
+          <button id="forgotPasswordBtn" type="button">Forgot password?</button>
           <button class="primary shimmer" type="submit"><span>Enter SpeakFlow</span><b>→</b></button>
         </form>
 
@@ -57,7 +59,8 @@
           <label>Display name<input id="signupName" maxlength="28" required placeholder="Sihem"></label>
           <label>Username<input id="signupUsername" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" required placeholder="sihem_english"></label>
           <label>Email<input id="signupEmail" type="email" autocomplete="email" required placeholder="you@email.com"></label>
-          <label>Password<input id="signupPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="6+ characters"></label>
+          <label>Password<div class="password-field"><input id="signupPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="6+ characters"><button class="password-toggle" type="button" data-password-toggle="signupPassword" aria-label="Show password">Show</button></div></label>
+          <label>Confirm password<div class="password-field"><input id="signupConfirmPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="Repeat password"><button class="password-toggle" type="button" data-password-toggle="signupConfirmPassword" aria-label="Show password">Show</button></div></label>
           <button class="primary shimmer" type="submit"><span>Create my profile</span><b>✦</b></button>
           <p class="micro muted">Everyone with your link can create their own profile and keep separate progress.</p>
         </form>
@@ -212,6 +215,7 @@
 
         <button class="settings-row glass" id="addPhraseBtn"><span>＋</span><div><b>Add my own phrase</b><small>Save something you wanted to say</small></div><em>›</em></button>
         <button class="settings-row glass" id="editProfileBtn"><span>✎</span><div><b>Edit profile</b><small>Name, username and avatar</small></div><em>›</em></button>
+        <button class="settings-row glass" id="changePasswordBtn"><span>🔐</span><div><b>Change password</b><small>Update your account password</small></div><em>›</em></button>
         <button class="settings-row glass danger-row" id="logoutBtn"><span>↪</span><div><b>Log out</b><small>Your progress stays synced</small></div><em>›</em></button>
       </section>
     </main>
@@ -230,7 +234,7 @@
     <div id="modalSheet" class="modal-sheet glass"></div>
   </div>
 
-  <script type="module" src="./auth-fix.js?v=1"></script>
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./auth-fix.js?v=3"></script>
+  <script type="module" src="./app.js?v=3"></script>
 </body>
 </html>
