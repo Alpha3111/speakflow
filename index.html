@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#080712" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>SpeakFlow — Social English</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-a"></span><span class="orb orb-b"></span><span class="orb orb-c"></span>
+    <span class="grain"></span>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <div id="confetti" class="confetti-layer" aria-hidden="true"></div>
+
+  <section id="setupGate" class="gate hidden">
+    <div class="gate-card glass">
+      <div class="brand-mark big">S</div>
+      <h1>One tiny setup first</h1>
+      <p>This copy of SpeakFlow needs your Supabase project URL and publishable key in <b>config.js</b>.</p>
+      <div class="setup-code">SUPABASE_URL<br>SUPABASE_PUBLISHABLE_KEY</div>
+      <p class="muted">The included README shows the exact 5-minute setup.</p>
+    </div>
+  </section>
+
+  <section id="authGate" class="gate hidden">
+    <div class="auth-wrap">
+      <div class="auth-brand">
+        <div class="brand-mark">S</div>
+        <div>
+          <span class="kicker">SPEAKFLOW</span>
+          <h1>Speak more.<br><span class="gradient-text">Freeze less.</span></h1>
+        </div>
+      </div>
+
+      <div class="auth-card glass">
+        <div class="segmented" id="authTabs">
+          <button class="seg active" data-auth="login">Log in</button>
+          <button class="seg" data-auth="signup">Create profile</button>
+          <span class="seg-glider"></span>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <label>Email<input id="loginEmail" type="email" autocomplete="email" required placeholder="you@email.com"></label>
+          <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••"></label>
+          <button class="primary shimmer" type="submit"><span>Enter SpeakFlow</span><b>→</b></button>
+        </form>
+
+        <form id="signupForm" class="auth-form hidden">
+          <div class="avatar-picker" id="avatarPicker"></div>
+          <label>Display name<input id="signupName" maxlength="28" required placeholder="Sihem"></label>
+          <label>Username<input id="signupUsername" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" required placeholder="sihem_english"></label>
+          <label>Email<input id="signupEmail" type="email" autocomplete="email" required placeholder="you@email.com"></label>
+          <label>Password<input id="signupPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="6+ characters"></label>
+          <button class="primary shimmer" type="submit"><span>Create my profile</span><b>✦</b></button>
+          <p class="micro muted">Everyone with your link can create their own profile and keep separate progress.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="app" class="app hidden">
+    <header class="topbar">
+      <button class="profile-chip" data-go="profile">
+        <span id="miniAvatar" class="mini-avatar">✨</span>
+        <span><b id="miniName">Learner</b><small id="miniLevel">Level 1</small></span>
+      </button>
+      <div class="xp-chip"><span>⚡</span><b id="headerXp">0 XP</b></div>
+    </header>
+
+    <main id="screens">
+      <section id="home" class="screen active">
+        <div class="hero-card glass tilt">
+          <div class="hero-shine"></div>
+          <div class="row between">
+            <span class="live-pill"><i></i> TODAY</span>
+            <span id="streakPill" class="soft-pill">🔥 1 day</span>
+          </div>
+          <h1 id="heroGreeting">Ready to sound<br><span class="gradient-text">more natural?</span></h1>
+          <p>Learn silently anywhere. Speak later. Do as many lessons as you want.</p>
+
+          <button id="continueBtn" class="primary huge shimmer">
+            <span><small>RECOMMENDED</small>Continue learning</span>
+            <b>→</b>
+          </button>
+
+          <div class="hero-metrics">
+            <div><strong id="dueHome">0</strong><span>to review</span></div>
+            <div><strong id="queueHome">0</strong><span>speak later</span></div>
+            <div><strong id="lessonsHome">0</strong><span>today</span></div>
+          </div>
+        </div>
+
+        <div class="rank-card glass slide-in">
+          <div class="rank-icon">🏆</div>
+          <div class="grow">
+            <span class="eyebrow">WEEKLY LEAGUE</span>
+            <h3><span id="homeRank">#–</span> <small>of <span id="homePlayers">–</span> learners</small></h3>
+            <div class="rank-progress"><i id="rankProgress"></i></div>
+          </div>
+          <button class="circle-btn" data-go="league">›</button>
+        </div>
+
+        <div class="section-head">
+          <div><span class="eyebrow">CHOOSE YOUR ENERGY</span><h2>What fits right now?</h2></div>
+        </div>
+
+        <div class="action-carousel">
+          <button class="action-card quiet" id="quietStart">
+            <span class="action-icon">🤫</span>
+            <span class="action-copy"><b>Quiet Mode</b><small>Learn without speaking</small></span>
+            <span class="arrow">→</span>
+          </button>
+          <button class="action-card speak" id="speakStart">
+            <span class="pulse-ring"></span>
+            <span class="action-icon">🎤</span>
+            <span class="action-copy"><b>I can speak now</b><small>Clear your speaking queue</small></span>
+            <span class="arrow">→</span>
+          </button>
+          <button class="action-card quick" id="quickStart">
+            <span class="action-icon">⚡</span>
+            <span class="action-copy"><b>Quick Talk</b><small>60 seconds. No prep.</small></span>
+            <span class="arrow">→</span>
+          </button>
+        </div>
+
+        <div class="section-head compact">
+          <div><span class="eyebrow">MOMENTUM</span><h2>Your XP today</h2></div>
+          <b id="todayXpLabel">0 XP</b>
+        </div>
+        <div class="xp-track glass">
+          <div class="xp-track-bar"><i id="todayXpBar"></i></div>
+          <div class="xp-milestones"><span>Start</span><span>150</span><span>300</span><span>500 XP</span></div>
+        </div>
+      </section>
+
+      <section id="practice" class="screen">
+        <div class="page-title">
+          <span class="eyebrow">PRACTICE</span>
+          <h1>Train your <span class="gradient-text">real English.</span></h1>
+        </div>
+        <div id="practiceMenu">
+          <button class="practice-tile glass" id="quietStart2">
+            <div class="tile-art quiet-art"><span>🤫</span></div>
+            <div class="tile-copy"><span class="eyebrow">NO MIC NEEDED</span><h3>Quiet lesson</h3><p>Recall, listening, natural phrasing and spaced review.</p></div>
+            <b class="tile-arrow">↗</b>
+          </button>
+          <button class="practice-tile glass" id="speakStart2">
+            <div class="tile-art speak-art"><span>🎤</span><i></i></div>
+            <div class="tile-copy"><span class="eyebrow">WHEN YOU'RE HOME</span><h3>Speaking queue <em id="queueBadge">0</em></h3><p>Practice everything you postponed during the day.</p></div>
+            <b class="tile-arrow">↗</b>
+          </button>
+          <button class="practice-tile glass" id="quickStart2">
+            <div class="tile-art quick-art"><span>⚡</span></div>
+            <div class="tile-copy"><span class="eyebrow">SPONTANEITY</span><h3>Quick Talk</h3><p>Talk for 60 seconds without preparing or overthinking.</p></div>
+            <b class="tile-arrow">↗</b>
+          </button>
+        </div>
+        <div id="exerciseStage" class="exercise-stage hidden"></div>
+      </section>
+
+      <section id="league" class="screen">
+        <div class="page-title row between align-end">
+          <div><span class="eyebrow">LEAGUE</span><h1>Friendly <span class="gradient-text">competition.</span></h1></div>
+          <button class="icon-btn" id="refreshLeague">↻</button>
+        </div>
+
+        <div class="segmented league-tabs">
+          <button class="seg active" data-period="week">This week</button>
+          <button class="seg" data-period="all">All time</button>
+          <span class="seg-glider"></span>
+        </div>
+
+        <div id="podium" class="podium"></div>
+        <div class="section-head compact"><div><span class="eyebrow">RANKING</span><h2>Everyone</h2></div></div>
+        <div id="leaderList" class="leader-list"></div>
+        <p class="micro muted center">XP rewards completed practice. This first static-web version discourages casual score tampering, but it is not designed as an anti-cheat tournament system.</p>
+      </section>
+
+      <section id="library" class="screen">
+        <div class="page-title">
+          <span class="eyebrow">MY ENGLISH</span>
+          <h1>Your phrase <span class="gradient-text">brain.</span></h1>
+        </div>
+        <div class="search-wrap glass"><span>⌕</span><input id="phraseSearch" placeholder="Search a phrase…"></div>
+        <div id="categoryChips" class="chips"></div>
+        <div id="phraseList" class="phrase-list"></div>
+      </section>
+
+      <section id="profile" class="screen">
+        <div class="profile-hero glass">
+          <div id="profileAvatar" class="profile-avatar">✨</div>
+          <h1 id="profileName">Learner</h1>
+          <p id="profileUsername">@learner</p>
+          <div class="level-line">
+            <span id="profileLevel">Level 1</span><div><i id="profileLevelBar"></i></div><b id="profileXP">0 XP</b>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="glass"><strong id="profileLessons">0</strong><span>lessons</span></div>
+          <div class="glass"><strong id="profileSpoken">0</strong><span>spoken</span></div>
+          <div class="glass"><strong id="profileStrong">0</strong><span>strong</span></div>
+          <div class="glass"><strong id="profileStreak">1</strong><span>day streak</span></div>
+        </div>
+
+        <button class="settings-row glass" id="addPhraseBtn"><span>＋</span><div><b>Add my own phrase</b><small>Save something you wanted to say</small></div><em>›</em></button>
+        <button class="settings-row glass" id="editProfileBtn"><span>✎</span><div><b>Edit profile</b><small>Name, username and avatar</small></div><em>›</em></button>
+        <button class="settings-row glass danger-row" id="logoutBtn"><span>↪</span><div><b>Log out</b><small>Your progress stays synced</small></div><em>›</em></button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-go="home"><span>⌂</span><small>Today</small></button>
+      <button class="nav-btn" data-go="practice"><span>✦</span><small>Practice</small></button>
+      <button class="nav-btn league-nav" data-go="league"><span>🏆</span><small>League</small></button>
+      <button class="nav-btn" data-go="library"><span>▤</span><small>Library</small></button>
+      <button class="nav-btn" data-go="profile"><span>☺</span><small>Profile</small></button>
+    </nav>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div id="modalSheet" class="modal-sheet glass"></div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
