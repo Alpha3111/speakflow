@@ -7,6 +7,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
 });
 
 const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
 function toast(message) {
   const el = $("#toast");
@@ -17,12 +18,52 @@ function toast(message) {
   toast.t = setTimeout(() => el.classList.remove("show"), 2600);
 }
 
+function enhancePasswordField(input) {
+  if (!input || input.dataset.passwordEnhanced === "1") return;
+  input.dataset.passwordEnhanced = "1";
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "password-visibility-toggle";
+  toggle.textContent = "👁 Show";
+  toggle.setAttribute("aria-label", "Show password");
+  toggle.style.cssText = "justify-self:end;background:transparent;border:0;color:#c4b5fd;padding:2px 2px 0;font-size:11px;font-weight:850;min-height:28px;cursor:pointer";
+
+  toggle.addEventListener("click", () => {
+    const showing = input.type === "text";
+    input.type = showing ? "password" : "text";
+    toggle.textContent = showing ? "👁 Show" : "Hide";
+    toggle.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+    input.focus();
+  });
+
+  input.insertAdjacentElement("afterend", toggle);
+}
+
+function enhanceAllPasswordFields(root=document) {
+  $$("input[type='password'], input[data-password-enhanced='1']", root).forEach(enhancePasswordField);
+}
+
+function ensureSignupConfirmationField() {
+  const signupPassword = $("#signupPassword");
+  if (!signupPassword || $("#signupPasswordConfirm")) return;
+
+  const currentLabel = signupPassword.closest("label");
+  if (!currentLabel) return;
+
+  const confirmLabel = document.createElement("label");
+  confirmLabel.id = "signupPasswordConfirmLabel";
+  confirmLabel.innerHTML = 'Confirm password<input id="signupPasswordConfirm" type="password" autocomplete="new-password" required minlength="6" placeholder="Repeat your password">';
+  currentLabel.insertAdjacentElement("afterend", confirmLabel);
+}
+
 function openModal(html) {
   const modal = $("#modal");
   const sheet = $("#modalSheet");
   if (!modal || !sheet) return;
   sheet.innerHTML = html;
   modal.classList.remove("hidden");
+  setTimeout(() => enhanceAllPasswordFields(sheet), 0);
 }
 
 function closeModal() {
@@ -31,6 +72,9 @@ function closeModal() {
 }
 
 function injectPasswordUI() {
+  ensureSignupConfirmationField();
+  enhanceAllPasswordFields();
+
   const loginForm = $("#loginForm");
   if (loginForm && !$("#forgotPasswordBtn")) {
     const btn = document.createElement("button");
@@ -138,6 +182,12 @@ document.addEventListener("submit", async (event) => {
     const displayName = $("#signupName")?.value.trim();
     const email = $("#signupEmail")?.value.trim();
     const password = $("#signupPassword")?.value || "";
+    const confirmPassword = $("#signupPasswordConfirm")?.value || "";
+
+    if (password.length < 6) throw new Error("Use at least 6 characters for your password.");
+    if (!confirmPassword) throw new Error("Please confirm your password.");
+    if (password !== confirmPassword) throw new Error("The passwords don't match.");
+
     const selected = $(".avatar-choice.selected");
     const avatar = selected?.dataset.avatar || selected?.dataset.a || selected?.textContent?.trim() || "✨";
     const { data: available, error: checkError } = await sb.rpc("check_username_available", { p_username: username });
